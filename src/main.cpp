@@ -1,48 +1,60 @@
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
 #include <iostream>
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-const char* glsl_version = "#version 130";
-int main(void)
+
+
+// Other includes
+#include "Window.h"
+#include "Shader.h"
+#include "Renderer.h"
+
+
+// Window dimensions
+const GLuint WIDTH = 800, HEIGHT = 600;
+
+int main()
 {
-	GLFWwindow* window;
+	Window window("Stellar",800,600);
+	window.init();
 
-	/* Initialize the library */
-	if (!glfwInit())
-		return -1;
+	Shader shader("Shaders/core.vs","Shaders/core.frag");
 
-	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-	if (!window)
+	GLfloat vertices[] =
 	{
-		glfwTerminate();
-		return -1;
-	}
+		// Positions         // Colors
+		0.5f, -0.5f, 0.0f,   1.0f, 0.0f, 0.0f,  // Bottom Right
+		-0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,  // Bottom Left
+		0.0f,  0.5f, 0.0f,   0.0f, 0.0f, 1.0f   // Top
+	};
+	GLuint VBO, VAO;
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	// Bind the Vertex Array Object first, then bind and set vertex buffer(s) and attribute pointer(s).
+	glBindVertexArray(VAO);
 
-	/* Make the window's context current */
-	glfwMakeContextCurrent(window);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	if (glewInit() != GLEW_OK)std::cerr << "Glew init fail";
+	// Position attribute
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
+	glEnableVertexAttribArray(0);
+	// Color attribute
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+	glEnableVertexAttribArray(1);
 
-	/* Loop until the user closes the window */
-	while (!glfwWindowShouldClose(window))
+	glBindVertexArray(0); // Unbind VAO
+
+	while (!window.isClosed()) 
 	{
-		/* Render here */
-		
-		
+		window.clear();
 
-		glClearColor(0.1f,0.1f,0.1f,1.f);
-		glClear(GL_COLOR_BUFFER_BIT);
-		/* Swap front and back buffers */
-		glfwSwapBuffers(window);
+		shader.Use();
+		glBindVertexArray(VAO);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glBindVertexArray(0);
 
-		/* Poll for and process events */
-		glfwPollEvents();
+		window.update();
 	}
-
-	glfwDestroyWindow(window);
-	glfwTerminate();
-	return 0;
 }
+
+
+
+
