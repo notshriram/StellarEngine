@@ -7,6 +7,7 @@ add_executable(main
  ${PROJECT_SOURCE_DIR}/src/Shader.cpp
  ${PROJECT_SOURCE_DIR}/src/Window.cpp
  ${PROJECT_SOURCE_DIR}/src/Renderer.cpp
+ ${PROJECT_SOURCE_DIR}/src/Texture.cpp
  ${PROJECT_SOURCE_DIR}/Dependencies/imgui/imconfig.h
  ${PROJECT_SOURCE_DIR}/Dependencies/imgui/imgui_demo.cpp
  ${PROJECT_SOURCE_DIR}/Dependencies/imgui/imgui_draw.cpp
@@ -37,7 +38,7 @@ add_subdirectory(${PROJECT_SOURCE_DIR}/Dependencies/glm EXCLUDE_FROM_ALL)
 target_link_libraries(main PRIVATE glm)
 
 target_include_directories(main PRIVATE
-    ${PROJECT_SOURCE_DIR}/Dependencies/imgui ${PROJECT_SOURCE_DIR}/include
+    ${PROJECT_SOURCE_DIR}/Dependencies/imgui ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/Dependencies/stb_image
 )
 IF(WIN32)
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT main)
